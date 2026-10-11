@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
+
+    // Progression complète : privée, lisible et modifiable par son seul propriétaire
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.xp is int && request.resource.data.xp >= 0 && request.resource.data.xp < 100000000
+        && request.resource.data.size() <= 30;
+    }
+
+    // Classement général : public en lecture, chaque joueur n'écrit que sa ligne, l'XP ne peut que monter (par paliers raisonnables)
+    match /leaderboard/{uid} {
+      function valid() {
+        let d = request.resource.data;
+        return d.keys().hasOnly(['name', 'xp', 'rank', 'index', 'badges', 'games', 'updatedAt'])
+          && d.name is string && d.name.size() >= 1 && d.name.size() <= 24
+          && d.xp is int && d.xp >= 0
+          && d.rank is int && d.rank >= 0 && d.rank <= 9
+          && d.index is int && d.index >= 0 && d.index <= 100
+          && d.badges is int && d.badges >= 0 && d.badges <= 50
+          && d.games is int && d.games >= 0;
+      }
+      allow read: if true;
+      allow create: if isOwner(uid) && valid() && request.resource.data.xp <= 100000;
+      allow update: if isOwner(uid) && valid()
+        && request.resource.data.xp >= resource.data.xp
+        && request.resource.data.xp - resource.data.xp <= 100000;
+      allow delete: if isOwner(uid);
+    }
+
+    // Défi du jour : un seul score par joueur et par jour, non modifiable
+    match /daily/{day}/scores/{uid} {
+      allow read: if true;
+      allow create: if isOwner(uid)
+        && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['name', 'score', 'correct', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24
+        && request.resource.data.score is int && request.resource.data.score >= 0 && request.resource.data.score <= 10000
+        && request.resource.data.correct is int && request.resource.data.correct >= 0 && request.resource.data.correct <= 10;
+      allow update, delete: if false;
+    }
+  }
+}

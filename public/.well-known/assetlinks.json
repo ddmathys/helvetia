@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "ch.helvetia.atlas",
+    "sha256_cert_fingerprints": ["7C:E2:30:21:98:D9:ED:C4:10:EC:3A:13:BD:B0:61:0E:7D:C1:0B:24:FA:7C:91:C0:EA:12:8A:D1:BC:DC:A2:C8"]
+  }
+}]

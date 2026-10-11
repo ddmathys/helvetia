@@ -1,0 +1,9 @@
+node_modules
+dist
+*.local
+android/keystore.properties
+android/*.jks
+android/local.properties
+android/.gradle
+android/app/build
+android/build
