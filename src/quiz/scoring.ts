@@ -97,15 +97,13 @@ export function pointsFor(diff: number, timeFrac: number | null, streak: number)
 }
 
 /* ===== Badges ===== */
-export interface GameSummary { mode: string; correct: number; total: number; bestStreak: number; score: number; chronoBestRound?: number; chronoMinKm?: number }
+export interface GameSummary { mode: string; correct: number; total: number; bestStreak: number; score: number; }
 
 export const BADGES: { id: string; icon: string; title: string; desc: string; test: (p: Progress, g?: GameSummary) => boolean }[] = [
   { id: 'first', icon: '👣', title: 'Premiers pas', desc: 'Terminer une première partie', test: p => p.games >= 1 },
   { id: 'perfect', icon: '💯', title: 'Sans faute', desc: '10 sur 10 dans une partie', test: (_, g) => !!g && g.total >= 10 && g.correct === g.total },
   { id: 'streak10', icon: '🔥', title: 'En feu', desc: 'Série de 10 bonnes réponses', test: p => p.bestStreak >= 10 },
   { id: 'streak25', icon: '🏔️', title: 'Inébranlable', desc: 'Série de 25 bonnes réponses', test: p => p.bestStreak >= 25 },
-  { id: 'tell', icon: '🎯', title: 'Guillaume Tell', desc: 'Chrono-Géo : placer un événement à moins de 10 km', test: (_, g) => (g?.chronoMinKm ?? 999) < 10 },
-  { id: 'chrono', icon: '⏳', title: 'Maître du temps', desc: 'Chrono-Géo : une manche à 950 points ou plus', test: (_, g) => (g?.chronoBestRound ?? 0) >= 950 },
   { id: 'tour', icon: '🗺️', title: 'Tour de Suisse', desc: 'Les 26 cantons au moins « Visiteur »', test: p => ALL_CODES.every(c => masteryLevel(p.cantons[c]) >= 1) },
   { id: 'all26', icon: '🇨🇭', title: 'Les Vingt-Six', desc: 'Les 26 cantons au moins « Connaisseur »', test: p => ALL_CODES.every(c => masteryLevel(p.cantons[c]) >= 2) },
   { id: 'honor', icon: '🏅', title: 'Citoyen d’honneur', desc: 'Un canton au niveau maximal', test: p => ALL_CODES.some(c => masteryLevel(p.cantons[c]) >= 4) },

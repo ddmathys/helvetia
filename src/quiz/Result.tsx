@@ -1,10 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { BADGES, rankOf } from './scoring';
 import { useProgress, type GameResult } from '../state/progress';
-import { useAtlas } from '../state/atlas';
-import type { Selection } from '../map/AtlasMap';
+import { useApp } from '../state/app';
 
-export interface RecapItem { ok: boolean; label: string; detail?: string; see?: { sel: Selection; year: number } }
+export interface RecapItem { ok: boolean; label: string; detail?: string; fiche?: string }
 
 function Confetti() {
   const bits = useMemo(() => Array.from({ length: 70 }, (_, i) => ({
@@ -21,13 +20,6 @@ export function Result({ title, score, scoreLabel, verdict, sub, result, recap, 
   const xp = useProgress(s => s.p.xp);
   const r = rankOf(xp);
   useEffect(() => { window.scrollTo(0, 0); }, []);
-  const see = (it: RecapItem) => {
-    if (!it.see) return;
-    const s = useAtlas.getState();
-    s.setYear(it.see.year);
-    s.select(it.see.sel);
-    s.setView('atlas');
-  };
   return (
     <div className="result">
       {celebrate && <Confetti />}
@@ -61,7 +53,7 @@ export function Result({ title, score, scoreLabel, verdict, sub, result, recap, 
           <div key={i}>
             <span className={`m ${it.ok ? 'ok' : 'ko'}`}>{it.ok ? '✓' : '✗'}</span>
             <span style={{ flex: 1 }}><b style={{ color: 'var(--ink)' }}>{it.label}</b>{it.detail && <> · {it.detail}</>}</span>
-            {it.see && <button className="chipbtn" onClick={() => see(it)}>Atlas ↗</button>}
+            {it.fiche && <button className="chipbtn" onClick={() => useApp.getState().open(it.fiche!)}>Fiche ↗</button>}
           </div>
         ))}
       </div>

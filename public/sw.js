@@ -1,5 +1,5 @@
 // Service worker minimal : l'app reste utilisable hors ligne (réseau d'abord, cache en secours).
-const CACHE = 'helvetia-v1';
+const CACHE = 'helvetia-v2';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/index.html', '/icon.svg']))); });
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', e => {

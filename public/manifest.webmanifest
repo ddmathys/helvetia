@@ -1,7 +1,7 @@
 {
-  "name": "Helvetia — la Suisse dans le temps",
+  "name": "Helvetia — l’histoire suisse en fiches",
   "short_name": "Helvetia",
-  "description": "Atlas historique de la Suisse et quiz des 26 cantons.",
+  "description": "Fiches illustrées sur l’histoire, les lieux et les traditions de la Suisse, et quiz pour apprendre.",
   "lang": "fr",
   "start_url": "/",
   "display": "standalone",

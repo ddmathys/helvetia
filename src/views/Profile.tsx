@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { ERAS, NAMES } from '../lib/data';
-import { SwissMap } from '../components/SwissMap';
 import { RingIndex } from '../components/RingIndex';
 import { useProgress } from '../state/progress';
 import { useQuiz } from '../state/quiz';
 import { BADGES, MASTERY, RANKS, eraIndex, helvetiaIndex, masteryHint, masteryLevel, rankOf } from '../quiz/scoring';
-import { MasteryLegend } from '../quiz/QuizHub';
+import { CantonChips, MasteryLegend } from '../quiz/QuizHub';
 import type { CantonCode } from '../lib/data';
 
 function authMessage(e: unknown): string {
@@ -72,7 +71,7 @@ export function Profile() {
         <div>
           <h3>Profil</h3>
           <h1>{r.icon} <em>{p.name || 'Voyageur'}</em></h1>
-          <p className="lead">{r.title} · {p.xp.toLocaleString('fr-CH')} XP · {Object.keys(p.badges).length}/{BADGES.length} badges</p>
+          <p className="lead">{r.title} · {p.xp.toLocaleString('fr-CH')} XP · {BADGES.filter(b => p.badges[b.id]).length}/{BADGES.length} badges</p>
         </div>
 
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -89,10 +88,10 @@ export function Profile() {
         <div className="split">
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div className="row-wrap" style={{ justifyContent: 'space-between' }}>
-              <h3>Ma carte de maîtrise</h3>
+              <h3>Maîtrise des cantons</h3>
               <RingIndex value={helvetiaIndex(p)} label="CANTONS" size={84} />
             </div>
-            <SwissMap className="qmap" labels={c => c} hoverLabel fill={c => MASTERY[masteryLevel(p.cantons[c])].color} onCanton={setFocus} />
+            <CantonChips onPick={setFocus} sort={false} />
             <MasteryLegend />
             {focus && (
               <div className="cta" role="group">
@@ -147,7 +146,7 @@ export function Profile() {
           </div>
         </div>
 
-        <p className="src">Helvetia · textes d’après le <a href="https://hls-dhs-dss.ch/fr/" target="_blank" rel="noopener">Dictionnaire historique de la Suisse</a> (CC BY-SA 4.0) et Wikipédia (CC BY-SA). Population : OFS. Fond de carte : OFS GEOSTAT (usage non commercial). Portraits : illustrations d’après les découvertes archéologiques.</p>
+        <p className="src">Helvetia · textes d’après le <a href="https://hls-dhs-dss.ch/fr/" target="_blank" rel="noopener">Dictionnaire historique de la Suisse</a> (CC BY-SA 4.0) et Wikipédia (CC BY-SA). Illustrations : Wikimedia Commons, auteur et licence indiqués sur chaque fiche. Carte de repère : OFS GEOSTAT (usage non commercial). Portraits : illustrations d’après les découvertes archéologiques.</p>
       </div>
     </div>
   );

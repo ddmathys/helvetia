@@ -1,5 +1,6 @@
-import { ALL_CODES, ERAS, NAMES } from '../lib/data';
-import { SwissMap } from '../components/SwissMap';
+import { ALL_CODES, ERAS, NAMES, type CantonCode } from '../lib/data';
+import { CATS, FICHES, type Cat } from '../lib/fiches';
+import { FACTORIES } from './bank';
 import { useProgress } from '../state/progress';
 import { useQuiz } from '../state/quiz';
 import { MASTERY, eraIndex, helvetiaIndex, masteryLevel, rankOf } from './scoring';
@@ -8,6 +9,23 @@ import { RingIndex } from '../components/RingIndex';
 
 export function MasteryLegend() {
   return <div className="mlegend">{MASTERY.map((m, i) => <span key={i}><i style={{ background: m.color }} />{m.title}</span>)}</div>;
+}
+
+/** Les 26 cantons, colorés selon la maîtrise, les moins connus d'abord. */
+export function CantonChips({ onPick, sort = true }: { onPick: (c: CantonCode) => void; sort?: boolean }) {
+  const p = useProgress(s => s.p);
+  const list = sort
+    ? ALL_CODES.slice().sort((a, b) => masteryLevel(p.cantons[a]) - masteryLevel(p.cantons[b]) || NAMES[a].localeCompare(NAMES[b], 'fr'))
+    : ALL_CODES.slice().sort((a, b) => NAMES[a].localeCompare(NAMES[b], 'fr'));
+  return (
+    <div className="chips">
+      {list.map(c => (
+        <button key={c} className="chipbtn" onClick={() => onPick(c)} title={MASTERY[masteryLevel(p.cantons[c])].title}>
+          <i className="dot" style={{ background: MASTERY[masteryLevel(p.cantons[c])].color }} />{NAMES[c]}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export function QuizHub() {
@@ -25,7 +43,7 @@ export function QuizHub() {
         <div>
           <h3>Le quiz Helvetia</h3>
           <h1>Prouve que tu connais <em>la Suisse</em>.</h1>
-          <p className="lead">Plus de 1 200 questions tirées de l’atlas : batailles, traités, peuples, villes, lacs et les 26 cantons. Chaque bonne réponse fait grimper ta maîtrise du canton et de l’époque concernés.</p>
+          <p className="lead">{FACTORIES.length.toLocaleString('fr-CH')} questions tirées des {FICHES.length} fiches : événements, lieux, traditions et peuples. Chaque réponse renvoie à sa fiche pour réviser, et fait grimper ta maîtrise du canton et de l’époque concernés.</p>
         </div>
 
         <div className="card" style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -62,12 +80,6 @@ export function QuizHub() {
             <small>Les mêmes 10 questions pour tout le monde aujourd’hui. Seul le premier essai entre au classement.</small>
             {dailyDone !== undefined && <span className="best">Ton score : {dailyDone.toLocaleString('fr-CH')}</span>}
           </button>
-          <button className="mode chrono" onClick={() => start({ mode: 'chrono' })}>
-            <span className="mi">🧭</span>
-            <b>Chrono-Géo</b>
-            <small>Place l’événement sur la carte et sur la frise du temps. 1 000 points par manche selon les kilomètres et les années d’écart.</small>
-            {p.chronoBest ? <span className="best">Record {p.chronoBest.toLocaleString('fr-CH')}</span> : null}
-          </button>
           <button className="mode" onClick={() => start({ mode: 'survival' })}>
             <span className="mi">❤️</span>
             <b>Survie</b>
@@ -77,7 +89,7 @@ export function QuizHub() {
           <button className="mode" onClick={() => start({ mode: 'exam' })}>
             <span className="mi">📘</span>
             <b>Examen blanc</b>
-            <small>30 questions sans chrono sur l’histoire et la géographie, réussi à 70 %. Pour préparer la naturalisation (hors institutions).</small>
+            <small>30 questions sans chrono sur toutes les fiches, réussi à 70 %. Un bon entraînement pour la naturalisation (hors institutions).</small>
             {p.examBest ? <span className="best">Meilleur {p.examBest} %</span> : null}
           </button>
           <button className="mode" disabled={p.missed.length < 3} onClick={() => start({ mode: 'review' })}>
@@ -87,17 +99,20 @@ export function QuizHub() {
           </button>
         </div>
 
-        <div className="split">
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div className="row-wrap" style={{ justifyContent: 'space-between' }}>
-              <h3>Par canton · touche la carte</h3>
-              <span className="muted" style={{ fontSize: '.8rem', fontWeight: 700 }}>Indice Helvetia {helvetiaIndex(p)} %</span>
-            </div>
-            <SwissMap className="qmap" hoverLabel labels={c => c}
-              fill={c => MASTERY[masteryLevel(p.cantons[c])].color}
-              onCanton={code => start({ mode: 'canton', code })} />
-            <MasteryLegend />
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <h3>Par thème</h3>
+          <div className="themes">
+            {(Object.keys(CATS) as Cat[]).map(c => (
+              <button key={c} className="theme" onClick={() => start({ mode: 'cat', cat: c })}>
+                <span className="ti">{CATS[c].icon}</span>
+                <b>{CATS[c].plural}</b>
+                <small>{FICHES.filter(f => f.cat === c).length} fiches</small>
+              </button>
+            ))}
           </div>
+        </div>
+
+        <div className="split">
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <h3>Par époque</h3>
             <div className="evlist">
@@ -112,14 +127,14 @@ export function QuizHub() {
                 );
               })}
             </div>
-            <h3 style={{ marginTop: 6 }}>Cantons à travailler</h3>
-            <div className="chips">
-              {ALL_CODES.slice().sort((a, b) => masteryLevel(p.cantons[a]) - masteryLevel(p.cantons[b]) || (p.cantons[a]?.n ?? 0) - (p.cantons[b]?.n ?? 0)).slice(0, 8).map(c => (
-                <button key={c} className="chipbtn" onClick={() => start({ mode: 'canton', code: c })}>
-                  <i className="dot" style={{ background: MASTERY[masteryLevel(p.cantons[c])].color }} />{NAMES[c]}
-                </button>
-              ))}
+          </div>
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="row-wrap" style={{ justifyContent: 'space-between' }}>
+              <h3>Par canton</h3>
+              <span className="muted" style={{ fontSize: '.8rem', fontWeight: 700 }}>Indice Helvetia {helvetiaIndex(p)} %</span>
             </div>
+            <CantonChips onPick={code => start({ mode: 'canton', code })} />
+            <MasteryLegend />
           </div>
         </div>
       </div>
