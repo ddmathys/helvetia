@@ -6,6 +6,7 @@ import { fmtYear } from '../lib/time';
 import { Locator } from '../components/Locator';
 import { useApp } from '../state/app';
 import { useQuiz } from '../state/quiz';
+import { EMPTY, useFilters } from '../state/filters';
 import { FACTORIES } from '../quiz/bank';
 import { FicheCard, FicheVisual } from './Fiches';
 
@@ -120,13 +121,18 @@ export function FichePage({ id }: { id: string }) {
         <div className="fbody">
           <div className="fkick"><i style={{ background: ERAS[f.era].color }} />{f.kind} · {ERAS[f.era].name}</div>
           <h1>{f.title}</h1>
-          <div className="fwhen">{f.dateLabel}{f.place ? ` · ${f.place}` : ''}</div>
+          <div className="fwhen">{f.dateLabel} · {f.place}</div>
           <p className="flead">{f.text}</p>
 
           <Details f={f} />
 
           <div className="sub">Où ?</div>
           <Locator codes={f.codes} lat={f.lat} lon={f.lon} />
+          {f.codes.length === 1 && (
+            <button className="place-link" onClick={() => { useFilters.getState().set({ ...EMPTY, canton: f.codes[0] }); useApp.getState().setView('fiches'); }}>
+              Toutes les fiches du canton →
+            </button>
+          )}
 
           {f.wiki?.extract && (
             <div className="further">

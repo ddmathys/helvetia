@@ -27,7 +27,7 @@ function Nav() {
   };
   return (
     <nav className="nav" aria-label="Navigation principale">
-      <span className="logo" aria-hidden="true">H</span>
+      <img className="logo" src="/logo.svg" alt="" aria-hidden="true" />
       {(Object.keys(LABELS) as View[]).map(v => (
         <button key={v} className={view === v ? 'on' : ''} onClick={() => go(v)} aria-current={view === v ? 'page' : undefined}>
           <span className="ico">{ICONS[v]}</span>

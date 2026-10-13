@@ -1,1 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0c131b"/><circle cx="256" cy="256" r="196" fill="#16212d" stroke="#26364a" stroke-width="8"/><path d="M96 330 L176 220 L224 272 L300 168 L360 240 L416 196 L416 330 Z" fill="#253446"/><path d="M300 168 L322 196 L308 200 L300 186 L290 200 L280 194Z" fill="#eef2f5"/><rect x="214" y="290" width="84" height="84" rx="10" fill="#e2453c"/><path d="M256 306v52M230 332h52" stroke="#fff" stroke-width="16" stroke-linecap="round"/><text x="256" y="150" text-anchor="middle" font-family="Georgia,serif" font-size="88" fill="#f2c46d">H</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs><radialGradient id="bg" cx="0.5" cy="0.38" r="0.75"><stop offset="0" stop-color="#1d3046"/><stop offset="1" stop-color="#0c131b"/></radialGradient></defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g transform="translate(51 46) scale(0.8)">
+  <defs>
+    <radialGradient id="apple" cx="0.36" cy="0.32" r="0.78">
+      <stop offset="0" stop-color="#ff8a74"/>
+      <stop offset="0.28" stop-color="#ef3b2d"/>
+      <stop offset="0.7" stop-color="#b3141a"/>
+      <stop offset="1" stop-color="#5e070c"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="0.78" cy="0.82" r="0.5">
+      <stop offset="0" stop-color="#ffb347" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f7d32"/>
+      <stop offset="1" stop-color="#8bd35a"/>
+    </linearGradient>
+    <linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0cf8a"/>
+      <stop offset="1" stop-color="#9c7036"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f7fa"/>
+      <stop offset="0.5" stop-color="#a9b6c3"/>
+      <stop offset="1" stop-color="#5d6b78"/>
+    </linearGradient>
+    <filter id="blur8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="blur4" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+  </defs>
+
+  <!-- ombre portée -->
+  <ellipse cx="262" cy="446" rx="128" ry="20" fill="#000" opacity=".45" filter="url(#blur8)"/>
+
+  <!-- flèche, partie arrière (cachée par la pomme au milieu) -->
+  <g transform="rotate(-14 256 290)">
+    <rect x="22" y="282" width="440" height="14" rx="7" fill="url(#shaft)"/>
+    <path d="M30 289 L12 258 L58 258 L74 289 Z" fill="#e2453c"/>
+    <path d="M30 289 L12 320 L58 320 L74 289 Z" fill="#f4f1ea"/>
+    <path d="M36 264 L66 289 M36 314 L66 289" stroke="rgba(0,0,0,.18)" stroke-width="3"/>
+  </g>
+
+  <!-- pomme -->
+  <path d="M256 158 C222 132 134 126 108 206 C84 282 122 398 190 426 C220 438 238 422 256 422 C274 422 292 438 322 426 C390 398 428 282 404 206 C378 126 290 132 256 158 Z" fill="url(#apple)"/>
+  <path d="M256 158 C222 132 134 126 108 206 C84 282 122 398 190 426 C220 438 238 422 256 422 C274 422 292 438 322 426 C390 398 428 282 404 206 C378 126 290 132 256 158 Z" fill="url(#rim)"/>
+  <!-- creux du pédoncule -->
+  <path d="M222 156 C238 168 274 168 290 156" fill="none" stroke="#5e070c" stroke-width="10" stroke-linecap="round" opacity=".55" filter="url(#blur4)"/>
+  <!-- reflet spéculaire -->
+  <ellipse cx="178" cy="226" rx="40" ry="22" transform="rotate(-38 178 226)" fill="#fff" opacity=".75" filter="url(#blur4)"/>
+  <ellipse cx="150" cy="282" rx="10" ry="18" transform="rotate(-10 150 282)" fill="#fff" opacity=".3" filter="url(#blur4)"/>
+
+  <!-- trous d'entrée et de sortie de la flèche -->
+  <g transform="rotate(-14 256 290)">
+    <ellipse cx="104" cy="289" rx="7" ry="12" fill="#3a0306" opacity=".75"/>
+    <ellipse cx="408" cy="289" rx="7" ry="12" fill="#3a0306" opacity=".75"/>
+    <!-- flèche, partie avant : sortie et pointe -->
+    <rect x="404" y="282" width="62" height="14" rx="7" fill="url(#shaft)"/>
+    <path d="M458 270 L506 289 L458 308 L466 289 Z" fill="url(#steel)" stroke="#3d4853" stroke-width="2" stroke-linejoin="round"/>
+  </g>
+
+  <!-- tige et feuille -->
+  <path d="M256 160 C254 136 260 112 276 92" fill="none" stroke="#5a3a1c" stroke-width="13" stroke-linecap="round"/>
+  <path d="M272 112 C292 70 350 62 384 80 C362 120 312 134 272 112 Z" fill="url(#leaf)"/>
+  <path d="M276 110 C310 96 344 86 372 82" fill="none" stroke="#1f5a22" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+</g>
+</svg>
